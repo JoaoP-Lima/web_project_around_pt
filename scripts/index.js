@@ -3,7 +3,7 @@
 const profileEditBtn = document.querySelector(".profile__edit-button");
 const editPopup = document.querySelector("#edit-popup");
 
-const editProfileForm = editPopup.querySelector("#edit-profile-form");
+const editProfileForm = document.forms.editProfileForm;
 const inputName = editProfileForm.querySelector(".popup__input_type_name");
 const inputDescription = editProfileForm.querySelector(
   ".popup__input_type_description",
@@ -17,13 +17,104 @@ const popupCaption = imagePopup.querySelector(".popup__caption");
 
 
 
-const newCardForm = document.querySelector("#new-card-form");
-const newCardFormBtn = newCardForm.querySelector(".popup__button");
+
+
+
+const newCardForm = document.forms.newPlaceForm;
+const submitButtonPlace = newCardForm.querySelector(".popup__button");
 const newCardBtn = document.querySelector(".profile__add-button");
 const newCardPopup = document.querySelector("#new-card-popup");
 
-const inputTitle = newCardForm.querySelector(".popup__input_type_card-name");
+const inputTitle = newCardForm.querySelector(".popup__input_type_place-name");
 const inputImage = newCardForm.querySelector(".popup__input_type_url");
+
+
+
+ const inputsEdit = editProfileForm.querySelectorAll(".popup__input");
+ const inputsCard = newCardForm.querySelectorAll(".popup__input");
+ const submitButtonEdit = editProfileForm.querySelector(".popup__button");
+
+
+ const showInputError = (inputElement, errorMessage) => {
+  const errorElement = document.querySelector(`.${inputElement.id}-error`)
+   inputElement.classList.add("popup__input_type_error");
+   errorElement.textContent = errorMessage;
+   errorElement.classList.add("popup__input-error_active");
+ 
+ };
+
+ const hideInputError = (inputElement) => {
+  const errorElement = document.querySelector(`.${inputElement.id}-error`)
+  inputElement.classList.remove("popup__input_type_error");
+  errorElement.textContent = "";
+  errorElement.classList.remove("popup__input-error_active");
+
+  
+
+ };
+
+const toggleButtonState = (inputs, submitButton) => {
+  const allValid = Array.from (inputs).every ((input) => {
+    return input.validity.valid
+  });
+  submitButton.disabled = !allValid
+   
+}
+
+inputsEdit.forEach((input) => {
+  input.addEventListener("input", () => {
+    if(!input.validity.valid) {
+      showInputError(input, input.validationMessage);
+    } else {
+      hideInputError(input);
+    }
+    toggleButtonState(inputsEdit, submitButtonEdit);
+  })
+})
+
+inputsCard.forEach((input) => {
+  input.addEventListener("input", () => {
+    if(!input.validity.valid) {
+      showInputError(input, input.validationMessage);
+    } else {
+      hideInputError(input);
+    }
+    toggleButtonState(inputsCard, submitButtonPlace);
+  })
+})
+
+
+const handleProfileFormSubmit = (evt) => {
+  
+
+
+    profileTitle.textContent = inputName.value;
+    profileDescription.textContent = inputDescription.value;
+
+    let formValid = true;
+
+    inputsEdit.forEach((input) => {
+      if(!input.validity.valid) {
+        showInputError(input, input.validationMessage)
+        formValid = false;
+      }
+    });
+
+    if(!formValid) {
+      evt.preventDefault();
+    } else {
+      closeModal(editPopup);
+    }
+
+
+
+
+
+
+  
+};
+editProfileForm.addEventListener("submit", handleProfileFormSubmit);
+
 
 
 const cardTemplate = document
@@ -37,8 +128,25 @@ const cardTemplate = document
     closeBtn.addEventListener("click", () => {
       closeModal(popup)
     });
+
+    popup.addEventListener("click", (evt) => {
+      if(evt.target === popup) {
+        closeModal(popup);
+      }
+    })
+
+
   });
 
+
+      document.addEventListener("keydown", (evt) => {
+      if(evt.key === "Escape") {
+           const openedPopup = document.querySelector(".popup_is-opened");
+           if(openedPopup) {
+            closeModal(openedPopup);
+           }
+      }
+    })
 
 const openModal = (modal) => {
   modal.classList.add("popup_is-opened");
@@ -59,7 +167,6 @@ newCardBtn.addEventListener("click", () => {
 
 
 
-
 const handleOpenEditModal = () => {
   fillProfileForm();
   openModal(editPopup);
@@ -75,16 +182,7 @@ const fillProfileForm = () => {
   inputDescription.value = currentValues.description;
 };
 
-const handleProfileFormSubmit = (evt) => {
-  evt.preventDefault();
 
-
-    profileTitle.textContent = inputName.value;
-    profileDescription.textContent = inputDescription.value;
-
-  closeModal(editPopup);
-};
-editProfileForm.addEventListener("submit", handleProfileFormSubmit);
 
 const handleCardLike = (evt) => {
   evt.target.classList.toggle("card__like-button_is-active");
@@ -106,8 +204,8 @@ const handleImageClick = (evt) => {
 }
 
 const getCardElement = (
-  cardName = "Lugar sem nome",
-  cardLink = "./images/placeholder.jpg",
+  cardName,
+  cardLink
 ) => {
   const cardElement = cardTemplate.cloneNode(true);
   const cardTitle = cardElement.querySelector(".card__title");
@@ -156,6 +254,16 @@ newCardForm.addEventListener("submit", handleCardFormSubmit);
 
 
 
+
+
+
+
+
+
+
+
+
+
 const initialCards = [
   {
     name: "Vale de Yosemite",
@@ -186,3 +294,4 @@ const initialCards = [
 initialCards.forEach((card) => {
   renderCard(card);
 })
+

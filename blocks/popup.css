@@ -118,7 +118,7 @@
   margin: 0;
 }
 .popup__button:disabled {
-  cursor:not-allowed;
+  cursor: not-allowed;
   background: #FFFFFF;
   color: #000000;
   border: 1px solid #000000;

@@ -2,15 +2,14 @@
 // IMPORTS
 // =========================
 
-import { fillProfileForm } from "./profile.js";
-import { openModal, closeModal, handleEscClose } from "./modal.js";
-import { getCardElement } from "./card.js";
 import {
-  enableValidation,
-  toggleButtonState,
-  hideInputError,
-  showInputError,
-} from "./validate.js";
+  openModal,
+  closeModal,
+  handleImageClick,
+  fillProfileForm,
+} from "./utils.js";
+import { Card } from "./Card.js";
+import { FormValidator } from "./FormValidator.js";
 
 // ==========================
 // SELEÇÕES DE ELEMENTOS
@@ -18,32 +17,26 @@ import {
 
 const profileEditBtn = document.querySelector(".profile__edit-button");
 const editPopup = document.querySelector("#edit-popup");
-const editProfileForm = document.forms.editProfileForm;
-const inputName = editProfileForm.querySelector(".popup__input_type_name");
-const inputDescription = editProfileForm.querySelector(
-  ".popup__input_type_description",
-);
+const editProfileFormElement = document.forms.editProfileForm;
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
-const imagePopup = document.querySelector("#image-popup");
-const popupImage = imagePopup.querySelector(".popup__image");
-const popupCaption = imagePopup.querySelector(".popup__caption");
+const inputName = editProfileFormElement.querySelector(
+  ".popup__input_type_name",
+);
+const inputDescription = editProfileFormElement.querySelector(
+  ".popup__input_type_description",
+);
 
-const newCardForm = document.forms.newPlaceForm;
+const newCardFormElement = document.forms.newPlaceForm;
 const newCardBtn = document.querySelector(".profile__add-button");
 const newCardPopup = document.querySelector("#new-card-popup");
-
-const inputTitle = newCardForm.querySelector(".popup__input_type_place-name");
-const inputImage = newCardForm.querySelector(".popup__input_type_url");
-
-const inputsEdit = editProfileForm.querySelectorAll(".popup__input");
-const inputsCard = newCardForm.querySelectorAll(".popup__input");
-
+const inputTitle = newCardFormElement.querySelector(
+  ".popup__input_type_place-name",
+);
+const inputImage = newCardFormElement.querySelector(
+  ".popup__input_type_place-link",
+);
 const cardsContainer = document.querySelector(".cards__list");
-
-const cardTemplate = document
-  .querySelector("#card-template")
-  .content.querySelector(".card");
 
 const popups = document.querySelectorAll(".popup");
 popups.forEach((popup) => {
@@ -63,6 +56,8 @@ popups.forEach((popup) => {
 // FUNÇÕES
 // ================================================
 
+
+
 const handleOpenEditModal = () => {
   fillProfileForm(
     {
@@ -74,87 +69,44 @@ const handleOpenEditModal = () => {
       inputDescription: inputDescription,
     },
   );
-  inputsEdit.forEach((input) => {
-    hideInputError(editProfileForm, input);
-  });
 
-  toggleButtonState(
-    Array.from(inputsEdit),
-    editProfileForm.querySelector(".popup__button"),
-  );
   openModal(editPopup);
+
+  profileFormValidator.resetValidator();
 };
 
-// Função para renderizar um cartão na página
-const renderCard = (cardData) => {
-  const cardElement = getCardElement(cardData, cardTemplate, () => {
-    handleImageClick(cardData);
-  });
-  cardsContainer.prepend(cardElement);
-};
 
-// Função manipuladora de popup de imagem
-const handleImageClick = (cardData) => {
-  popupImage.src = cardData.link;
-  popupImage.alt = cardData.name;
-  popupCaption.textContent = cardData.name;
-
-  openModal(imagePopup);
-};
-
-// Função manipuladora do envio do formulário "Editar perfil"
-
-const handleProfileFormSubmit = (evt) => {
+const handleFormProfileSubmit = (evt) => {
   evt.preventDefault();
 
   profileTitle.textContent = inputName.value;
   profileDescription.textContent = inputDescription.value;
 
-  let formValid = true;
-
-  inputsEdit.forEach((input) => {
-    if (!input.validity.valid) {
-      showInputError(input, input.validationMessage);
-      formValid = false;
-    }
-  });
-
   closeModal(editPopup);
-};
 
-// Função manipuladora de envio do formulário "Novo Local"
+}
 
-const handleCardFormSubmit = (evt) => {
+const handleFormNewCardSubmit = (evt) => {
   evt.preventDefault();
-
   renderCard({
     name: inputTitle.value,
     link: inputImage.value,
   });
 
-  newCardForm.reset();
-
-  hideInputError(newCardForm, inputTitle);
-  hideInputError(newCardForm, inputImage);
-
-  const submitButton = newCardForm.querySelector(".popup__button");
-  submitButton.disabled = true;
-
+  newCardFormElement.reset();
+  newPlaceFormValidator.resetValidator();
   closeModal(newCardPopup);
+  
 };
 
 // ===================================================
 // EVENTOS
 // ===================================================
 
-editProfileForm.addEventListener("submit", handleProfileFormSubmit);
-
 profileEditBtn.addEventListener("click", handleOpenEditModal);
 newCardBtn.addEventListener("click", () => {
   openModal(newCardPopup);
 });
-
-newCardForm.addEventListener("submit", handleCardFormSubmit);
 
 // ===================================================
 // INICIALIZAÇÃO
@@ -186,9 +138,31 @@ const initialCards = [
   },
 ];
 
-initialCards.forEach((card) => {
-  renderCard(card);
+const config = {
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  errorClass: "popup__input-error_active",
+  inputErrorClass: "popup__input_type_error",
+};
+
+initialCards.forEach((cardItem) => {
+  const card = new Card(cardItem, "#card-template", handleImageClick);
+  const cardElement = card.generateCard();
+
+  cardsContainer.append(cardElement);
 });
 
-enableValidation(editProfileForm);
-enableValidation(newCardForm);
+// Função para renderizar um cartão na página
+const renderCard = (cardData) => {
+  const card = new Card(cardData, "#card-template", handleImageClick);
+  const cardElement = card.generateCard();
+  cardsContainer.prepend(cardElement);
+};
+
+const profileFormValidator = new FormValidator(config, editProfileFormElement);
+const newPlaceFormValidator = new FormValidator(config, newCardFormElement);
+profileFormValidator.enableValidation();
+newPlaceFormValidator.enableValidation();
+
+editProfileFormElement.addEventListener("submit", handleFormProfileSubmit);
+newCardFormElement.addEventListener("submit", handleFormNewCardSubmit);

@@ -1,5 +1,5 @@
 
-export class Card {
+export default class Card {
   constructor(cardData, template, functionCallback) {
     this._title = cardData.name;
     this._link = cardData.link;
@@ -39,7 +39,7 @@ export class Card {
     });
 
     this._imageElement.addEventListener("click", () => {
-      this._handleImageClick({name: this._title, link: this._link });
+      this._handleImageClick(this._title, this._link);
     })
 
     

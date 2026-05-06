@@ -18,15 +18,24 @@
       </header>
       <main class="content">
         <section class="profile page__section">
-          <img class="profile__image" src="./images/avatar.jpg" alt="Avatar" />
+          <div class="profile__image-container">
+            <img
+              class="profile__image"
+              src="./images/avatar.jpg"
+              alt="Avatar"
+            />
+            <div class="profile__image-overlay">
+              <span class="profile__icon"></span>
+            </div>
+          </div>
           <div class="profile__info">
-            <h1 class="profile__title">Jacques Cousteau</h1>
+            <h1 class="profile__title"></h1>
             <button
               aria-label="Editar perfil"
               class="profile__edit-button"
               type="button"
             ></button>
-            <p class="profile__description">Explorador</p>
+            <p class="profile__description"></p>
           </div>
           <button
             aria-label="Adicionar cartão"
@@ -90,7 +99,7 @@
             <span class="popup__input-error name-input-error"></span>
             <input
               class="popup__input popup__input_type_description"
-              name="job"
+              name="about"
               placeholder="Sobre mim"
               type="text"
               minlength="2"
@@ -126,7 +135,7 @@
             />
             <span class="popup__input-error place-name-input-error"></span>
             <input
-              class="popup__input popup__input_type_place-link"
+              class="popup__input popup__input_type-link"
               name="link"
               placeholder="Link de Imagem"
               required
@@ -149,6 +158,41 @@
           ></button>
           <img alt="" class="popup__image" src="#" />
           <p class="popup__caption"></p>
+        </div>
+      </div>
+      <div class="popup" id="confirmation-popup">
+        <div class="popup__content">
+          <button
+            class="popup__close"
+            aria-label="Fechar pop-up"
+            type="button"
+          ></button>
+          <h3 class="popup__title">Tem certeza?</h3>
+          <form class="popup__form" name="deleteCardForm">
+            <button type="submit" class="button popup__button">Sim</button>
+          </form>
+        </div>
+      </div>
+      <div class="popup" id="update-avatar-popup">
+        <div class="popup__content">
+          <button
+            class="popup__close"
+            type="button"
+            aria-label="Fechar pop-up"
+          ></button>
+          <h3 class="popup__title">Alterar a foto da perfil</h3>
+          <form class="popup__form" name="updateAvatarForm">
+            <input
+              type="url"
+              class="popup__input popup__input_type-link"
+              name="avatar"
+              placeholder="Link de Imagem de Perfil"
+              required
+              id="avatar-input"
+            />
+            <span class="popup__input-error avatar-input-error"></span>
+            <button type="submit" class="popup__button button">Salvar</button>
+          </form>
         </div>
       </div>
     </div>

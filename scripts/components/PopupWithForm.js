@@ -1,10 +1,22 @@
 import Popup from "./Popup.js";
+import Api from "./Api.js";
 
 export default class PopupWithForm extends Popup {
   constructor(popupSelector, handleFormSubmitElement) {
     super(popupSelector);
     this._handleFormSubmitElement = handleFormSubmitElement;
     this._form = this._popup.querySelector(".popup__form");
+    this._submitButton = this._popup.querySelector(".popup__button");
+    this._defaultSubmitButton = this._submitButton.textContent;
+  }
+
+
+  renderLoading(isLoading) {
+    if(isLoading) {
+      this._submitButton.textContent = "Salvando..."
+    } else {
+      this._submitButton.textContent = this._defaultSubmitButton;
+    }
   }
 
   _getInputValues() {

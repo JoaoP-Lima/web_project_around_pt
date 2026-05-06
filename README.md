@@ -10,7 +10,7 @@ Projeto desenvolvido como prática de JavaScript, manipulação de DOM e valida�
 - ✏️ Editar informações do perfil
 - ➕ Adicionar novos cartões
 - ❤️ Curtir cartões
-- 🗑 Excluir cartões
+- 🗑 Excluir cartões com pop-up de confirmação
 - 🔍 Visualizar imagem ampliada em modal
 - ❌ Fechar modais ao clicar fora ou pressionar ESC
 - ✅ Validação de formulários em tempo real
@@ -24,6 +24,7 @@ Projeto desenvolvido como prática de JavaScript, manipulação de DOM e valida�
 - JavaScript
 - Manipulação de DOM
 - Validação nativa de formulários
+- JavaScript Assíncrono com APIs
 
 ---
 

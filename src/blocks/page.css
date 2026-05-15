@@ -1,5 +1,6 @@
 .page {
   background: #000;
+  visibility: hidden;
 }
 
 .page__content {

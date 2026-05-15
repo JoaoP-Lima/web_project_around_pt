@@ -22,21 +22,18 @@ import UserInfo from "../components/UserInfo.js";
 import Section from "../components/Section.js";
 import PopupWithConfirmation from "../components/PopupWithConfirmation.js";
 
-
-
-
-
 const handleUpdateAvatarFormSubmit = (inputData) => {
-   updateAvatarPopup.renderLoading(true);
+  updateAvatarPopup.renderLoading(true);
   api
     .updateAvatar(inputData.avatar)
     .then((avatarData) => {
-      profileAvatar.src = avatarData.avatar;
+      userInfo._avatar.src = avatarData.avatar;
       updateAvatarPopup.close();
     })
     .catch((err) => {
       console.log(err);
-    }).finally(() => {
+    })
+    .finally(() => {
       updateAvatarPopup.renderLoading(false);
     });
 };
@@ -55,20 +52,25 @@ const handleProfileFormSubmit = (inputData) => {
 };
 
 const handleFormNewCardSubmit = (inputData) => {
-  api.addCard(inputData).then((cardData) => {
-    const card = new Card(
-      { name: cardData.name, link: cardData.link },
-      "#card-template",
-      handleImageClick,
-      handleLikeClick,
-      handleDeleteClick,
-    );
-    const cardElement = card.generateCard();
-    section.addItemStart(cardElement);
+  api
+    .addCard(inputData)
+    .then((cardData) => {
+      const card = new Card(
+        { name: cardData.name, link: cardData.link },
+        "#card-template",
+        handleImageClick,
+        handleLikeClick,
+        handleDeleteClick,
+      );
+      const cardElement = card.generateCard();
+      section.addItemStart(cardElement);
 
-    newPlaceFormValidator.resetValidator();
-    addCardPopup.close();
-  });
+      newPlaceFormValidator.resetValidator();
+      addCardPopup.close();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 export const handleImageClick = (name, link) => {
@@ -93,22 +95,25 @@ const handleDeleteClick = (cardInstance) => {
 };
 const handleLikeClick = (cardInstance) => {
   if (!cardInstance.isLiked()) {
-    api.likeCard(cardInstance.getId()).then((updatedCardLike) => {
-      cardInstance.setIsLiked(updatedCardLike.isLiked);
-    });
+    api
+      .likeCard(cardInstance.getId())
+      .then((updatedCardLike) => {
+        cardInstance.setIsLiked(updatedCardLike.isLiked);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   } else {
-    api.unlikeCard(cardInstance.getId()).then((updatedCardLike) => {
-      cardInstance.setIsLiked(updatedCardLike.isLiked);
-    });
+    api
+      .unlikeCard(cardInstance.getId())
+      .then((updatedCardLike) => {
+        cardInstance.setIsLiked(updatedCardLike.isLiked);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 };
-
-
-
-
-
-
-
 
 //INSTÂNCIAS
 
@@ -138,12 +143,23 @@ const section = new Section(
 );
 section.renderItems();
 
+api
+  .getAppInfo()
+
+  .then(([user, cards]) => {
+
+    document.querySelector(".page").style.visibility = "visible"
+  })
+
+  .catch((err) => {
+    console.log(err);
+  });
+
 const userInfo = new UserInfo({
   nameSelector: ".profile__title",
   jobSelector: ".profile__description",
   avatarSelector: ".profile__image",
 });
-
 
 const editProfilePopup = new PopupWithForm(
   "#edit-popup",
@@ -154,7 +170,6 @@ const addCardPopup = new PopupWithForm(
   handleFormNewCardSubmit,
 );
 
-
 const updateAvatarPopup = new PopupWithForm(
   "#update-avatar-popup",
   handleUpdateAvatarFormSubmit,
@@ -163,13 +178,9 @@ const updateAvatarPopup = new PopupWithForm(
 const confirmationPopup = new PopupWithConfirmation("#confirmation-popup");
 const popupWithImage = new PopupWithImage("#image-popup");
 
-
 const profileFormValidator = new FormValidator(config, editProfileFormElement);
 const newPlaceFormValidator = new FormValidator(config, newCardFormElement);
 const updateAvatarFormValidator = new FormValidator(config, updateAvatarForm);
-
-
-
 
 api
   .getInitialCard()
@@ -191,7 +202,6 @@ api
   .catch((err) => {
     console.log(err);
   });
-
 
 //EVENTOS
 

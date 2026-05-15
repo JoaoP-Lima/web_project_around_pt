@@ -4,6 +4,8 @@ export default class Api {
     this.headers = options.headers;
   }
 
+
+
   getInitialCard() {
     return fetch(`${this.baseUrl}/cards`, {
       headers: this.headers,
@@ -25,6 +27,14 @@ export default class Api {
       }
       return Promise.reject(`Error: ${res.status}`);
     });
+  }
+
+
+
+  getAppInfo() {
+    return Promise.all([
+      this.getUserInfo(), this.getInitialCard()
+    ]);
   }
 
   updateUserInfo(userData) {
